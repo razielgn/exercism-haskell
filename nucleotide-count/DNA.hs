@@ -1,14 +1,13 @@
 module DNA (count, nucleotideCounts) where
 
-import qualified Data.Map.Strict as Map
-import Data.List (foldl')
+import Data.Map.Strict (Map, fromListWith)
 
 count :: Char -> String -> Int
 count c
   | c `elem` "ACTU" = length . filter (== c)
-  | otherwise       = error $ "invalid nucleotide '" ++ c : "'"
+  | otherwise       = error $ "invalid nucleotide " ++ show c
 
-nucleotideCounts :: String -> Map.Map Char Int
-nucleotideCounts = foldl' (flip insertion) empty
-  where insertion b = Map.insertWith (+) b 1
-        empty       = Map.fromList [('A', 0), ('C', 0), ('G', 0), ('T', 0)]
+nucleotideCounts :: String -> Map Char Int
+nucleotideCounts s = fromListWith (+) $ empty ++ list s
+  where list = map (\c -> (c, 1))
+        empty = [('A', 0), ('C', 0), ('G', 0), ('T', 0)]
