@@ -5,7 +5,7 @@ import Data.Char (toUpper, isSpace)
 sing :: Integer -> Integer -> String
 sing from to = strip $ unlines verses
   where strip  = dropWhile isSpace
-        verses = reverse $ map verse [to..from]
+        verses = map verse [from, from - 1 .. to]
 
 verse :: Integer -> String
 verse n = capitalize $ unlines [firstSentence, secondSentence]
