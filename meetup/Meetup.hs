@@ -1,8 +1,7 @@
 module Meetup (Weekday(..), Schedule(..), meetupDay) where
 
-import Data.Time.Calendar (Day, fromGregorian, isLeapYear)
-import Data.Time.Calendar.WeekDate (toWeekDate)
-import Data.Time.Calendar.MonthDay (monthLength)
+import Data.Time.Calendar (Day, fromGregorian, gregorianMonthLength)
+import Data.Time.Calendar.OrdinalDate (mondayStartWeek, fromMondayStartWeek)
 
 data Weekday = Monday
              | Tuesday
@@ -11,7 +10,7 @@ data Weekday = Monday
              | Friday
              | Saturday
              | Sunday
-             deriving (Enum, Eq)
+             deriving (Enum, Show)
 
 data Schedule = First
               | Second
@@ -19,23 +18,24 @@ data Schedule = First
               | Fourth
               | Last
               | Teenth
+              deriving (Enum, Show)
 
 type Month = Int
 type Year = Integer
 
 meetupDay :: Schedule -> Weekday -> Year -> Month -> Day
-meetupDay schedule weekday y m =
-  case schedule of
-    Teenth -> last teenthDays
-    First  -> head days
-    Second -> days !! 1
-    Third  -> days !! 2
-    Fourth -> days !! 3
-    Last   -> last days
-  where teenthDays        = filterDays $ daysRange 13 19
-        days              = filterDays $ daysRange 1 daysInMonth
-        daysRange s f     = map (fromGregorian y m) [s..f]
-        filterDays        = filter (matchingDay . lastT . toWeekDate)
-        matchingDay n     = weekday == toEnum (n - 1)
-        daysInMonth       = monthLength (isLeapYear y) m
-        lastT (_, _, x)   = x
+meetupDay s w y m = fromMondayStartWeek y w' weekday
+  where w' = case s of
+               Teenth -> let (weekN, dayN) = firstTDay
+                         in if weekday >= dayN then weekN else weekN + 1
+               Last   -> let (weekN, dayN) = lastDay
+                         in if weekday <= dayN then weekN else weekN - 1
+               _      -> let (weekN, dayN) = firstDay
+                         in schedule + if weekday >= dayN then weekN else weekN + 1
+        weekday   = fromEnum w + 1
+        schedule  = fromEnum s
+        firstTDay = nthDay 13
+        firstDay  = nthDay 1
+        lastDay   = nthDay monthLen
+        nthDay    = mondayStartWeek . fromGregorian y m
+        monthLen  = gregorianMonthLength y m
