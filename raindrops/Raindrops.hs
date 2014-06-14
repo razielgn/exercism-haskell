@@ -1,13 +1,11 @@
 module Raindrops (convert) where
 
-import PrimeFactors (primeFactors)
-import Data.List (nub)
-
 convert :: Integer -> String
-convert x = convert' $ translator $ nub $ primeFactors x
+convert x = convert' translator
   where convert' "" = show x
         convert' s  = s
-        translator  = concatMap translate
+        translator  = concatMap mapper [3, 5, 7]
+        mapper d    = if x `mod` d == 0 then translate d else ""
         translate 3 = "Pling"
         translate 5 = "Plang"
         translate 7 = "Plong"
