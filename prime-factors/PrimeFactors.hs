@@ -6,7 +6,6 @@ primeFactors :: Integer -> [Integer]
 primeFactors x = unfoldr unfolder (x, 2)
   where unfolder (1, _) = Nothing
         unfolder (n, d)
-          | stop n d       = Just (n, (1, d))
-          | n `mod` d == 0 = Just (d, (n `div` d, 2))
+          | d * d > n      = Just (n, (1, d))
+          | n `mod` d == 0 = Just (d, (n `div` d, d))
           | otherwise      = unfolder (n, succ d)
-        stop n d = fromIntegral d > sqrt (fromIntegral n)
