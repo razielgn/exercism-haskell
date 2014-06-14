@@ -1,6 +1,6 @@
 module Allergies (Allergen(..), isAllergicTo, allergies) where
 
-import Data.Bits (bit, (.&.))
+import Data.Bits (testBit)
 
 data Allergen = Eggs
               | Peanuts
@@ -13,8 +13,8 @@ data Allergen = Eggs
               deriving (Enum, Eq, Show)
 
 isAllergicTo :: Allergen -> Int -> Bool
-isAllergicTo a = (/= 0) . (.&.) bit'
-  where bit' = bit $ fromEnum a
+isAllergicTo a n = testBit n bit
+  where bit = fromEnum a
 
 allergies :: Int -> [Allergen]
 allergies n = filter (`isAllergicTo` n) allAllergies
