@@ -11,5 +11,6 @@ encode = partition . transpose . lowercase . filter'
         partition = unwords . chunksOf 5
 
 invert :: Char -> Char
-invert c | isDigit c = c
-invert c = chr $ ord 'a' + ord 'z' - ord c
+invert c
+  | isDigit c = c
+  | otherwise = chr $ ord 'a' + ord 'z' - ord c
