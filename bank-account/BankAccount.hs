@@ -7,19 +7,19 @@ module BankAccount (
 ) where
 
 import Data.IORef (IORef, readIORef, newIORef, atomicWriteIORef, atomicModifyIORef')
-import Control.Monad (liftM)
 
-type BankAccount = IORef Integer
+type BankAccount = IORef (Maybe Integer)
 
 openAccount :: IO BankAccount
-openAccount = newIORef 0
+openAccount = newIORef (Just 0)
 
 closeAccount :: BankAccount -> IO ()
-closeAccount ba = atomicWriteIORef ba 0
+closeAccount ba = atomicWriteIORef ba Nothing
 
 getBalance :: BankAccount -> IO (Maybe Integer)
-getBalance = liftM Just . readIORef
+getBalance = readIORef
 
 incrementBalance :: BankAccount -> Integer -> IO (Maybe Integer)
-incrementBalance ba n = liftM Just $ atomicModifyIORef' ba modifier
-  where modifier prev = (prev + n, n)
+incrementBalance ba n = atomicModifyIORef' ba modifier
+  where modifier (Just prev) = (Just (prev + n), Just n)
+        modifier Nothing     = (Nothing, Nothing)
