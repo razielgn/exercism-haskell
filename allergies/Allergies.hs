@@ -17,5 +17,4 @@ isAllergicTo a n = testBit n bit
   where bit = fromEnum a
 
 allergies :: Int -> [Allergen]
-allergies n = filter (`isAllergicTo` n) allAllergies
-  where allAllergies = enumFrom Eggs
+allergies n = filter (`isAllergicTo` n) [Eggs ..]
