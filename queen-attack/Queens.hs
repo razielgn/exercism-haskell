@@ -18,10 +18,6 @@ boardString w b = present $ map fill grid
         present = unlines . map (intersperse ' ') . chunksOf 8
 
 canAttack :: Position -> Position -> Bool
-canAttack (x, y) (x', y')
-  | x == x'   = True
-  | y == y'   = True
-  | m == n    = True
-  | otherwise = False
+canAttack (x, y) (x', y') = x == x' || y == y' || m == n
   where m = abs $ x - x'
         n = abs $ y - y'
