@@ -19,17 +19,17 @@ data Bearing = North
 
 type Position = (Int, Int)
 
-data Robot = Robot !Bearing !Position
+data Robot = Robot !Bearing !Int !Int
              deriving (Show, Eq)
 
 mkRobot :: Bearing -> Position -> Robot
-mkRobot = Robot
+mkRobot b (x, y) = Robot b x y
 
 coordinates :: Robot -> Position
-coordinates (Robot _ p) = p
+coordinates (Robot _ x y) = (x, y)
 
 bearing :: Robot -> Bearing
-bearing (Robot b _) = b
+bearing (Robot b _ _) = b
 
 simulate :: Robot -> String -> Robot
 simulate = foldl' action
