@@ -19,11 +19,12 @@ foldl' _ s []     = s
 foldl' f !s (x:xs) = foldl' f (f s x) xs
 
 foldr :: (a -> b -> b) -> b -> [a] -> b
-foldr _ s []     = s
-foldr f s (x:xs) = x `f` foldr f s xs
+foldr f s = worker
+  where worker [] = s
+        worker (x:xs) = x `f` worker xs
 
 length :: [a] -> Int
-length = foldr (\ _ -> (+) 1) 0
+length = foldl' (\acc _ -> acc + 1) 0
 
 reverse :: [a] -> [a]
 reverse = foldl' (flip (:)) []
@@ -43,4 +44,4 @@ filter f (x:xs)
 (x:xs) ++ ys = x : xs ++ ys
 
 concat :: [[a]] -> [a]
-concat = foldr (++) []
+concat = foldl' (++) []
