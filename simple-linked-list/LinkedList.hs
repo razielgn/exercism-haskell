@@ -1,3 +1,5 @@
+{-# LANGUAGE DeriveFoldable #-}
+
 module LinkedList (
   datum
 , fromList
@@ -10,14 +12,12 @@ module LinkedList (
 ) where
 
 import Prelude hiding (reverse)
-import Data.Foldable (Foldable, foldMap, foldl')
-import Data.Monoid (mempty, mappend)
+import Data.Foldable (Foldable)
+import qualified Data.Foldable as F
 
-data List a = Nil | Cons a (List a)
-
-instance Foldable List where
-  foldMap _ Nil         = mempty
-  foldMap f (Cons x xs) = f x `mappend` foldMap f xs
+data List a = Nil
+            | Cons a (List a)
+            deriving (Foldable)
 
 nil :: List a
 nil = Nil
@@ -38,11 +38,10 @@ next Nil         = error "called next on empty list"
 next (Cons _ xs) = xs
 
 toList :: List a -> [a]
-toList Nil         = []
-toList (Cons x xs) = x : toList xs
+toList = F.foldr (:) []
 
 fromList :: [a] -> List a
 fromList = foldr new nil
 
 reverseLinkedList :: List a -> List a
-reverseLinkedList = foldl' (flip new) nil
+reverseLinkedList = F.foldl' (flip new) nil
