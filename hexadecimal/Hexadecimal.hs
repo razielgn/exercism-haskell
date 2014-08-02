@@ -2,19 +2,12 @@ module Hexadecimal (
   hexToInt
 ) where
 
-import Control.Monad (liftM2)
-import Data.List (foldl')
-import Data.Maybe (fromMaybe)
-
 hexToInt :: String -> Integer
-hexToInt = unbox . combine . zip indexes . digits . reverse
-  where digits  = map hex
-        indexes = [16 ^ i | i <- [0..] :: [Integer]]
-        combine = foldl' multiply (Just 0)
-        multiply int (i, digit) = int .+. (digit .*. Just i)
-        (.+.) = liftM2 (+)
-        (.*.) = liftM2 (*)
-        unbox = fromMaybe 0
+hexToInt = combine 0 . map hex
+  where combine acc []     = acc
+        combine acc (x:xs) = case x of
+          Just n  -> (combine $! acc * 16 + n) xs
+          Nothing -> 0
 
 hex :: Char -> Maybe Integer
 hex '0' = Just 0
