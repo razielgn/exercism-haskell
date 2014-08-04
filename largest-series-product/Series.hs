@@ -5,17 +5,17 @@ module Series (
 ) where
 
 import Data.Char (digitToInt)
+import Data.List (tails)
 
 digits :: String -> [Int]
 digits = map digitToInt
 
 slices :: Int -> String -> [[Int]]
-slices n s
-  | n == 0        = []
-  | length s <  n = []
-  | otherwise     = digits (take n s) : slices n (tail s)
+slices n = slice . digits
+  where slice xs = map (take n) $ take (length xs - n + 1) (tails xs)
 
 largestProduct :: Int -> String -> Int
-largestProduct n = maximum' 1 . map product . slices n
-  where maximum' x [] = x
-        maximum' _ xs = maximum xs
+largestProduct n s =
+  case map product $ slices n s of
+    []       -> 1
+    products -> maximum products
