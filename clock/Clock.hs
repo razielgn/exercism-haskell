@@ -5,27 +5,28 @@ module Clock (
 
 import Text.Printf (printf)
 
-data Clock = Clock Integer Integer
-             deriving (Eq, Show)
+newtype Clock = Clock Integer
+                deriving (Eq, Show)
 
 instance Num Clock where
-  (+) (Clock h1 m1) (Clock h2 m2) = fromHourMin (h1 + h2) (m1 + m2)
-  negate (Clock h m) = Clock (pred hours - h) (minutes - m)
+  (+) (Clock m1) (Clock m2) = fromInteger $ m1 + m2
+  negate (Clock m) = Clock $ day - m
   fromInteger = fromHourMin 0
+  (*) = undefined
   abs = undefined
   signum = undefined
-  (*) = undefined
 
 fromHourMin :: Integer -> Integer -> Clock
-fromHourMin h m = Clock h' m'
-  where m' = m `mod` minutes
-        h' = (h + m `div` minutes) `mod` hours
+fromHourMin h m = Clock m'
+  where m' = (h * hour + m) `mod` day
 
 toString :: Clock -> String
-toString (Clock h m) = printf "%02d:%02d" h m
+toString (Clock m) = printf format h' m'
+  where format   = "%02d:%02d"
+        (h', m') = m `divMod` hour
 
-hours :: Integer
-hours = 24
+hour :: Integer
+hour = 60
 
-minutes :: Integer
-minutes = 60
+day :: Integer
+day = 1440
