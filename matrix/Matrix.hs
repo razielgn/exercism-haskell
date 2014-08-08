@@ -13,8 +13,6 @@ module Matrix (
 ) where
 
 import Control.Arrow ((&&&))
-import Data.Char (isSpace)
-import Data.List.Split (split, startsWith)
 import Data.Vector (Vector)
 import qualified Data.Vector as V
 
@@ -49,12 +47,10 @@ flatten :: Matrix a -> Vector a
 flatten (Matrix _ _ v) = v
 
 fromString :: Read a => String -> Matrix a
-fromString = fromList . map (map read . words') . lines
-  where splitQuoted  = map rstrip . split (startsWith " \"")
-        rstrip       = dropWhile isSpace
-        words' xs
-          | '"' `elem` xs = splitQuoted xs
-          | otherwise     = words xs
+fromString = fromList . map parse . lines
+  where parse s = case reads s of
+                    [(x, xs)] -> x : parse xs
+                    _         -> []
 
 fromList :: [[a]] -> Matrix a
 fromList l = Matrix height' width' vector'
