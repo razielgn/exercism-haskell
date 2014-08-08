@@ -25,7 +25,7 @@ row :: Int -> Matrix a -> Vector a
 row i (Matrix _ w v) = V.slice (w * i) w v
 
 column :: Int -> Matrix a -> Vector a
-column i (Matrix h w v) = V.map (v V.!) range
+column i (Matrix h w v) = V.backpermute v range
   where range = V.enumFromStepN i w h
 
 rows :: Matrix a -> Int
