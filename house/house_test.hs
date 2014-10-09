@@ -1,5 +1,5 @@
 import Test.HUnit ( Test(..), (~?=), runTestTT, Counts(..) )
-import System.Exit (ExitCode(..), exitWith) 
+import System.Exit (ExitCode(..), exitWith)
 import House ( rhyme )
 
 exitProperly :: IO Counts -> IO ()
